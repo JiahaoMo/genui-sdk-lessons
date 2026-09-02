@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# environment / secrets — 不要上传真实密钥
+.env
+.env.*
+.env.local
+.env.backup
+
+# logs
+*.log
+npm-debug.log*
+
+# build output
+dist/
+dist-ssr/
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.sw?
+
+# misc
+*.local
