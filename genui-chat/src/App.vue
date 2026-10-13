@@ -1,10 +1,13 @@
 <script setup>
 import { GenuiChat, GenuiConfigProvider } from '@opentiny/genui-sdk-vue';
 import { materials } from '@opentiny/genui-sdk-materials-vue-opentiny-vue';
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import WeatherCard from './components/WeatherCard.vue';
 import { createOpenAICustomFetch } from './utils/toolFetch.js';
-
+import CustomThink from './components/CustomThink.vue';
+import AssistantFooter from './components/AssistantFooter.vue';
+import UserFooter from './components/UserFooter.vue';
+import ConversationSidebar from './components/ConversationSidebar.vue';
 
 const url = 'http://localhost:3100/chat/completions'
 const model = ref('deepseek-v4-flash')
@@ -271,28 +274,50 @@ const customSnippets = [
   },
 ]
 
+const roles = {
+  assistant: {
+    slots: {
+      trailer: AssistantFooter,
+    },
+  },
+  user: {
+    slots: {
+      trailer: UserFooter
+    }
+  }
+}
 
+const chatRef = ref(null)
+const conversation = computed(()=>chatRef.value?.getConversation())
 
 </script>
 
 <template>
   <GenuiConfigProvider :materials="materials" :theme="theme">
-    <GenuiChat 
-      :url="url" 
-      :model="model" 
-      :temperature="temperature"
-      :custom-fetch="customFetch"
-      :messages="initialMessage"
-      :chat-config="chatConfig"
-      :custom-actions="customActions"
-      :custom-examples="customExamples"
-      :custom-components="customComponents"
-      :custom-snippets="customSnippets"
-      >
-      <template #empty>
-        <div class="empty-text">欢迎使用生成式UI</div>
-      </template>
-    </GenuiChat>
+    <div class="chat-with-sidebar">
+      <ConversationSidebar :conversation="conversation"></ConversationSidebar>
+      <div class="chat-container">
+        <GenuiChat
+          ref="chatRef"
+          :url="url" 
+          :model="model" 
+          :temperature="temperature"
+          :custom-fetch="customFetch"
+          :messages="initialMessage"
+          :chat-config="chatConfig"
+          :custom-actions="customActions"
+          :custom-examples="customExamples"
+          :custom-components="customComponents"
+          :custom-snippets="customSnippets"
+          :think-component="CustomThink"
+          :roles="roles"
+        >
+        <template #empty>
+          <div class="empty-text">欢迎使用生成式UI</div>
+        </template>
+      </GenuiChat>
+      </div>
+    </div>
   </GenuiConfigProvider>
 </template>
 
@@ -319,6 +344,13 @@ html {
   justify-content: center;
   align-items: center;
   font-size: 30px;
+}
+.chat-with-sidebar {
+  display: flex;
+  height: 100%;
+}
+.chat-container {
+  flex: 1;
 }
 
 </style>

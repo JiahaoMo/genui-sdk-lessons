@@ -73,6 +73,7 @@ export function createOpenAICustomFetch(config) {
     // 解析请求体
     const requestBody = JSON.parse(options.body);
     const { messages, model, temperature, metadata } = requestBody;
+    console.log(messages)
 
     try {
       const openai = new OpenAI({
@@ -216,3 +217,5 @@ export function createOpenAICustomFetch(config) {
     }
   };
 }
+
+
